@@ -1,7 +1,10 @@
-package org.ungs;
+package org.ungs.inheritanceTree;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ungs.clazz.ClassPath;
+import org.ungs.clazz.Clazz;
 
 public class InheritanceTreeFactory {
 

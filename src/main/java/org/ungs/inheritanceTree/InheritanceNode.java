@@ -1,7 +1,9 @@
-package org.ungs;
+package org.ungs.inheritanceTree;
 
 import java.util.Iterator;
 import java.util.List;
+
+import org.ungs.clazz.Clazz;
 
 public class InheritanceNode implements Iterable<InheritanceNode>{
 

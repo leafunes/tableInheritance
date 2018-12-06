@@ -1,4 +1,4 @@
-package org.ungs;
+package org.ungs.clazz;
 
 import java.io.*;
 import java.util.Objects;

@@ -1,5 +1,8 @@
 package org.ungs;
 
+import org.ungs.clazz.Clazz;
+import org.ungs.inheritanceTree.InheritanceNode;
+import org.ungs.inheritanceTree.InheritanceTreeFactory;
 import org.ungs.test.A;
 import org.ungs.test.B;
 import org.ungs.test.C;
