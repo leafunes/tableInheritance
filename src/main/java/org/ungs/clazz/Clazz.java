@@ -1,7 +1,14 @@
 package org.ungs.clazz;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+
+import org.ungs.inheritanceTree.InheritanceNode;
 
 public class Clazz {
 
@@ -22,6 +29,9 @@ public class Clazz {
 
     public boolean isSubclassOf(Clazz other){
 
+    	if(this.getClazz().getSuperclass() == null)
+    		return false;
+    	
         return this.getClazz().getSuperclass().equals(other.getClazz());
 
     }
@@ -47,4 +57,23 @@ public class Clazz {
     public int hashCode() {
         return Objects.hash(clazz, name);
     }
+
+	public boolean isAbstract() {
+		
+		return Modifier.isAbstract(this.clazz.getModifiers());
+		
+	}
+
+	public List<Field> getAllFields() {
+		
+        List<Field> fields = new ArrayList<>();
+        Class internal = clazz;
+        while (internal != Object.class) {
+            fields.addAll(Arrays.asList(internal.getDeclaredFields()));
+            internal = internal.getSuperclass();
+        }
+        return fields;
+		
+		
+	}
 }

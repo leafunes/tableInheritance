@@ -32,6 +32,8 @@ public class Classifier {
 				.sorted(Collections.reverseOrder())
 				.collect(Collectors.toList());
 		
+		results.stream().forEach(x -> System.out.println(x.getScore() + " " + x.getScoringClass().getName()));
+		
 		if(isElegible(results))
 			return results.get(0).getScoringClass();
 		
@@ -53,8 +55,7 @@ public class Classifier {
 				.map(x -> x.getScore())
 				.collect(Collectors.toList()));
 		
-		return max.getScore() >= avg + (2 * stdDev);
-	
+		return (max.getScore() >= avg + (2 * stdDev)) || (max.getScore() >= avg - (2 * stdDev));
 	
 	}
 	

@@ -14,7 +14,7 @@ public class EvaluatorConfig {
 	public Double getCoeficientFor(String attrName) {
 		
 		if(!this.coeficients.containsKey(attrName))
-			return 1.0;
+			return 0.0;
 		
 		return this.coeficients.get(attrName);
 		
