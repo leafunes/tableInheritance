@@ -18,29 +18,13 @@ public class Main {
     public static void main(String[] args) {
 
         InheritanceTreeFactory factory = new InheritanceTreeFactory();
+        TreeClassifier classifier = new TreeClassifier();
 
         Clazz Aclass = new Clazz(A.class);
 
         InheritanceNode node = factory.getTreeOf(Aclass);
 
-        Evaluator SiTIEvaluator = new Evaluator(new ScoringClass("SiTI"),
-        		new EvaluatorConfigBuilder().addCoeficient("fields", -2.0).build());
-        
-
-        Evaluator ClTIEvaluator = new Evaluator(new ScoringClass("ClTI"),
-        		new EvaluatorConfigBuilder().addCoeficient("height", -1.0).build());
-        
-
-        Evaluator CoTIEvaluator = new Evaluator(new ScoringClass("CoTI"),
-        		new EvaluatorConfigBuilder().addCoeficient("abstract", -2.0).build());
-
-        Classifier classifier = new Classifier(new ScoringClass("AD-Hoc"));
-        classifier.addEvaluator(CoTIEvaluator);
-        classifier.addEvaluator(SiTIEvaluator);
-        classifier.addEvaluator(ClTIEvaluator);
-        
         ScoringClass end = classifier.classify(node);
-        
         
         System.out.println(end.getName());
     }

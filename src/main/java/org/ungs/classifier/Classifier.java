@@ -32,7 +32,7 @@ public class Classifier {
 				.sorted(Collections.reverseOrder())
 				.collect(Collectors.toList());
 		
-		results.stream().forEach(x -> System.out.println(x.getScore() + " " + x.getScoringClass().getName()));
+		//results.stream().forEach(x -> System.out.println(x.getScore() + " " + x.getScoringClass().getName()));
 		
 		if(isElegible(results))
 			return results.get(0).getScoringClass();
