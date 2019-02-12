@@ -1,73 +1,69 @@
 package org.ungs.inheritanceTree;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.ungs.classifier.Attribute;
 import org.ungs.classifier.Classifiable;
-import org.ungs.clazz.Clazz;
 
 
 public class InheritanceNode implements Iterable<InheritanceNode>, Classifiable{
 
-	private List<InheritanceNode> neighborhood;
-    private Clazz content;
+	private List<InheritanceNode> sons;
+    private Class clazz;
 
-    public InheritanceNode(List<InheritanceNode> neighborhood, Clazz content) {
-        this.neighborhood = neighborhood;
-        this.content = content;
+    public InheritanceNode(List<InheritanceNode> sons, Class content) {
+        this.sons = sons;
+        this.clazz = content;
     }
     
-    public Clazz getContent() {
-		return content;
+    public Class getClazz() {
+		return clazz;
 	}
     
-    public int getHeight() {
+    private int getHeight() {
     	
-    	if(this.neighborhood.isEmpty())
+    	if(this.sons.isEmpty())
     		return 1;
     	
-    	return 1 + neighborhood.stream().mapToInt(x -> x.getHeight()).max().getAsInt();
+    	return 1 + sons.stream().mapToInt(x -> x.getHeight()).max().getAsInt();
     }
     
-    public int getAbstractClasses() {
+    private int getCountAbstractClasses() {
     	
-    	int thisAbstract = this.content.isAbstract() ? 1 : 0;
+    	int thisClazzAbstractWeight = Modifier.isAbstract(this.clazz.getModifiers()) ? 1 : 0;
     	
-    	if(neighborhood.isEmpty())
-        	return thisAbstract;
+    	if(sons.isEmpty())
+        	return thisClazzAbstractWeight;
 	 
-		return thisAbstract + neighborhood.stream()
-					    		.mapToInt(x -> x.getAbstractClasses())
+		return thisClazzAbstractWeight + sons.stream()
+					    		.mapToInt(x -> x.getCountAbstractClasses())
 					    		.sum();
     	
     }
     
-    public int getExtraFields() {
+    private int getCountExtraFields() {
     	
-    	if(neighborhood.isEmpty())
+    	if(sons.isEmpty())
         	return 0;
 
-    	int thisFields = this.content.getAllFields().size();
-    	
     	int toRet = 0;
-    	
-    	for(InheritanceNode n : neighborhood) {
-    		toRet += n.getContent().getAllFields().size() - thisFields;
-    		toRet += n.getExtraFields();
+		
+    	for(InheritanceNode n : sons) {
+    		toRet += n.getClazz().getDeclaredFields().length;
+    		toRet += n.getCountExtraFields();
     	}
     	
     	return toRet;
-    	
     	
     }
 
     @Override
     public Iterator<InheritanceNode> iterator() {
-        return neighborhood.iterator();
+        return sons.iterator();
     }
 
 	@Override
@@ -76,8 +72,8 @@ public class InheritanceNode implements Iterable<InheritanceNode>, Classifiable{
 		List<Attribute> toRet = new ArrayList<>();
 		
 		Attribute heigth = new Attribute("height", (double) getHeight());
-		Attribute abstractClasses = new Attribute("abstract", (double) getAbstractClasses());
-		Attribute extraFields = new Attribute("fields", (double) getExtraFields());
+		Attribute abstractClasses = new Attribute("abstract", (double) getCountAbstractClasses());
+		Attribute extraFields = new Attribute("fields", (double) getCountExtraFields());
 		
 		toRet.add(heigth);
 		toRet.add(abstractClasses);

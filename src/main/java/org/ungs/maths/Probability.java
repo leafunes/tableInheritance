@@ -1,6 +1,5 @@
 package org.ungs.maths;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 public class Probability {

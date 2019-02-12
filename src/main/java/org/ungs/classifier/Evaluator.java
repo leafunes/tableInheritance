@@ -1,27 +1,35 @@
 package org.ungs.classifier;
 
+import java.util.Map;
+
 public class Evaluator {
 	
-	private ScoringClass scoringClass;
-	private EvaluatorConfig evaluatorConfig;
+	private Map<String, Double> evaluatorConfig;
 	
-	public Evaluator(ScoringClass scoringClass, EvaluatorConfig evaluatorConfig) {
+	public Evaluator(Map<String, Double>  evaluatorConfig) {
 		
-		this.scoringClass = scoringClass;
 		this.evaluatorConfig = evaluatorConfig;
 		
 	}
 	
-	public EvaluatorResult getScore(Classifiable thing) {
+	public Double getScore(Classifiable thing) {
 		
 		Double score = 0.0;
 		
 		for(Attribute attr : thing.getAttributes()) {
-			score += attr.getScore() * this.evaluatorConfig.getCoeficientFor(attr.getName());
+			score += attr.getScore() * this.getCoeficientFor(attr.getName());
 		}
 		
-		return new EvaluatorResult(scoringClass, score);
+		return score;
 		
+	}
+
+	private Double getCoeficientFor(String attr){
+
+		if(!this.evaluatorConfig.containsKey(attr))
+			return 0.0;
+		
+		return this.evaluatorConfig.get(attr);
 	}
 	
 	

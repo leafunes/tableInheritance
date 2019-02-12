@@ -1,10 +1,10 @@
 package org.ungs.classifier;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ungs.maths.Probability;
 
@@ -12,50 +12,46 @@ import org.ungs.maths.Probability;
 
 public class Classifier {
 	
-	private Collection<Evaluator> evaluators;
-	private ScoringClass defaultClass;
+	private Map<String, Evaluator> evaluators;
+	private String defaultClass;
 	
 	
-	public Classifier(ScoringClass defaultClass) {
-		this.evaluators = new ArrayList<>();
+	public Classifier(String defaultClass) {
+		this.evaluators = new HashMap<>();
 		this.defaultClass = defaultClass;
 	}
 	
-	public void addEvaluator(Evaluator evaluator) {
-		this.evaluators.add(evaluator);
+	public void addEvaluator(String className, Evaluator evaluator) {
+		this.evaluators.put(className, evaluator);
 	}
 	
-	public ScoringClass classify(Classifiable thing) {
+	public String classify(Classifiable thing) {
 
-		List<EvaluatorResult> results = evaluators.stream()
-				.map(e -> e.getScore(thing))
-				.sorted(Collections.reverseOrder())
-				.collect(Collectors.toList());
+		Map<String, Double> results = new HashMap<>();
+		
+		this.evaluators.forEach((name, eva) -> results.put(name, eva.getScore(thing)));
 		
 		//results.stream().forEach(x -> System.out.println(x.getScore() + " " + x.getScoringClass().getName()));
 		
-		if(isElegible(results))
-			return results.get(0).getScoringClass();
+		if(isMaxElegible(results.values()))
+			return Collections.max(results.entrySet(), Comparator.comparingDouble(Map.Entry::getValue)).getKey();
 		
 		return defaultClass;
 	
 	}
 	
-	private boolean isElegible(List<EvaluatorResult> sortedResults) {
+	private boolean isMaxElegible(Collection<Double> values) {
 
-		EvaluatorResult max = sortedResults.get(0);
-		
-		Double avg = sortedResults.stream()
-	            .mapToDouble(x -> x.getScore())
+		Double max = Collections.max(values);
+
+		Double avg = values.stream()
+	            .mapToDouble(x -> x)
 	            .average()
 	            .getAsDouble();
 		
-		Double stdDev = Probability.computeStandardDeviation(sortedResults
-				.stream()
-				.map(x -> x.getScore())
-				.collect(Collectors.toList()));
+		Double stdDev = Probability.computeStandardDeviation(values);
 		
-		return (max.getScore() >= avg + (2 * stdDev)) || (max.getScore() >= avg - (2 * stdDev));
+		return (max >= avg + (2 * stdDev)) || (max >= avg - (2 * stdDev));
 	
 	}
 	

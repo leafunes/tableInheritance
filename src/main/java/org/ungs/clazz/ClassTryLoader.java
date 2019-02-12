@@ -4,20 +4,7 @@ import java.io.File;
 
 public class ClassTryLoader {
 
-    private static ClassTryLoader instance;
-
-
-    public static ClassTryLoader getInstance(){
-        if(instance == null)
-            instance = new ClassTryLoader();
-        return instance;
-    }
-
-    private ClassTryLoader() {
-
-    }
-
-    public Class tryToLoad(File f){
+    public static Class tryToLoad(File f){
         String[] pathParts = f.getAbsolutePath().split('\\'+File.separator);
         //HACK
         pathParts[pathParts.length - 1] = pathParts[pathParts.length - 1].replace(".class", "");

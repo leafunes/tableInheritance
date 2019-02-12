@@ -1,39 +1,55 @@
 package org.ungs;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.javatuples.Triplet;
 import org.ungs.classifier.Classifier;
 import org.ungs.classifier.Evaluator;
-import org.ungs.classifier.EvaluatorConfigBuilder;
-import org.ungs.classifier.ScoringClass;
 import org.ungs.inheritanceTree.InheritanceNode;
 
 public class TreeClassifier{
 
 	private Classifier classifier;
 
+	// Representa una tablita con los nombres de las estrategias,
+	// y los atributos con sus coeficientes.
+	private List<Triplet<String, String, Double>> evaluatorsData;
+
 	public TreeClassifier() {
-		
-		Evaluator SiTIEvaluator = new Evaluator(new ScoringClass("SiTI"),
-        		new EvaluatorConfigBuilder().addCoeficient("fields", -2.0).build());
-        
+		evaluatorsData = new ArrayList<>();
+		loadData();
 
-        Evaluator ClTIEvaluator = new Evaluator(new ScoringClass("ClTI"),
-        		new EvaluatorConfigBuilder().addCoeficient("height", -1.0).build());
-        
-
-        Evaluator CoTIEvaluator = new Evaluator(new ScoringClass("CoTI"),
-        		new EvaluatorConfigBuilder().addCoeficient("abstract", -2.0).build());
-
-        classifier = new Classifier(new ScoringClass("AD-Hoc"));
-        classifier.addEvaluator(CoTIEvaluator);
-        classifier.addEvaluator(SiTIEvaluator);
-        classifier.addEvaluator(ClTIEvaluator);
+		classifier = new Classifier("AD-Hoc");
+		evaluatorsData.forEach(x -> 
+			classifier.addEvaluator(x.getValue0(), 
+				buildSimpleEvaluator(x.getValue1(), x.getValue2())
+				)
+			);
 	}
 
-	
-	public ScoringClass classify(InheritanceNode tree) {
+	public String classify(InheritanceNode tree) {
 		
 		return classifier.classify(tree);
 		
+	}
+
+	// TODO: El diseño es simplista, los evaluadores solo tienen un atributo con un coeficiente
+	// Se deberia permitir tener muchos atributos
+	private Evaluator buildSimpleEvaluator(String coefName, Double coefValue){
+		Map<String, Double> coefs = new HashMap<>();
+		coefs.put(coefName, coefValue);
+
+		return new Evaluator(coefs);
+	}
+
+	private void loadData(){
+		//TODO: deberia cargarse de un archivo
+		evaluatorsData.add(Triplet.with("ConcreteTable", "abstract", -2.0));
+		evaluatorsData.add(Triplet.with("SingleTable", "fields", -2.0));
+		evaluatorsData.add(Triplet.with("ClassTable", "height", -1.0));
 	}
 	
 	

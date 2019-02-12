@@ -29,17 +29,16 @@ public class ClassPath {
 
     }
 
-    public List<Clazz> getAllClasses(){
+    public List<Class> getAllClasses(){
 
-        List<Clazz> toRet = new ArrayList<>();
-
+        List<Class> toRet = new ArrayList<>();
 
         for (File file : this.classpath) if(file.isDirectory()) {
                 for(File insider : getAllFiles(file)) if(insider.getName().endsWith(".class")){
-                    toRet.add(new Clazz(insider));
+                    toRet.add(ClassTryLoader.tryToLoad(insider));
             }
         }else if(file.getName().endsWith(".class"))
-            toRet.add(new Clazz(file));
+            toRet.add(ClassTryLoader.tryToLoad(file));
 
         return toRet;
 
