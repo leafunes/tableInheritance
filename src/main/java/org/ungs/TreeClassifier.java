@@ -9,6 +9,7 @@ import org.javatuples.Triplet;
 import org.ungs.classifier.Classifier;
 import org.ungs.classifier.Evaluator;
 import org.ungs.inheritanceTree.InheritanceNode;
+import org.ungs.inheritanceTree.InheritanceTree;
 
 public class TreeClassifier{
 
@@ -30,7 +31,7 @@ public class TreeClassifier{
 			);
 	}
 
-	public String classify(InheritanceNode tree) {
+	public String classify(InheritanceTree tree) {
 		
 		return classifier.classify(tree);
 		

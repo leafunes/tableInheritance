@@ -1,58 +1,62 @@
 package org.ungs.inheritanceTree;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.ungs.classifier.Attribute;
-import org.ungs.classifier.Classifiable;
 
+public class InheritanceNode implements Iterable<InheritanceNode>{
 
-public class InheritanceNode implements Iterable<InheritanceNode>, Classifiable{
-
-	private List<InheritanceNode> sons;
+	private List<InheritanceNode> children;
     private Class clazz;
 
-    public InheritanceNode(List<InheritanceNode> sons, Class content) {
-        this.sons = sons;
+    protected InheritanceNode(List<InheritanceNode> children, Class content) {
+        this.children = children;
         this.clazz = content;
     }
     
-    public Class getClazz() {
+    protected Class getClazz() {
 		return clazz;
 	}
     
-    private int getHeight() {
+    // Esta funcion no deberia ir aca, pues el nodo no tiene altura
+    // pero para hacerla recursiva, es mas facil que esté acá que en el arbol
+    // igualmente, es protected y solo el arbol puede acceder a ella
+    protected int getHeight() {
     	
-    	if(this.sons.isEmpty())
+    	if(this.children.isEmpty())
     		return 1;
     	
-    	return 1 + sons.stream().mapToInt(x -> x.getHeight()).max().getAsInt();
+    	return 1 + children.stream().mapToInt(x -> x.getHeight()).max().getAsInt();
     }
     
-    private int getCountAbstractClasses() {
+    // Esta funcion no deberia ir aca
+    // pero para hacerla recursiva, es mas facil que esté acá que en el arbol
+    // igualmente, es protected y solo el arbol puede acceder a ella
+    protected int getCountAbstractClasses() {
     	
     	int thisClazzAbstractWeight = Modifier.isAbstract(this.clazz.getModifiers()) ? 1 : 0;
     	
-    	if(sons.isEmpty())
+    	if(children.isEmpty())
         	return thisClazzAbstractWeight;
 	 
-		return thisClazzAbstractWeight + sons.stream()
+		return thisClazzAbstractWeight + children.stream()
 					    		.mapToInt(x -> x.getCountAbstractClasses())
 					    		.sum();
     	
     }
     
-    private int getCountExtraFields() {
+    // Esta funcion no deberia ir aca
+    // pero para hacerla recursiva, es mas facil que esté acá que en el arbol
+    // igualmente, es protected y solo el arbol puede acceder a ella
+    protected int getCountExtraFields() {
     	
-    	if(sons.isEmpty())
+    	if(children.isEmpty())
         	return 0;
 
     	int toRet = 0;
 		
-    	for(InheritanceNode n : sons) {
+    	for(InheritanceNode n : children) {
     		toRet += n.getClazz().getDeclaredFields().length;
     		toRet += n.getCountExtraFields();
     	}
@@ -61,25 +65,9 @@ public class InheritanceNode implements Iterable<InheritanceNode>, Classifiable{
     	
     }
 
+
     @Override
     public Iterator<InheritanceNode> iterator() {
-        return sons.iterator();
+        return children.iterator();
     }
-
-	@Override
-	public Collection<Attribute> getAttributes() {
-		
-		List<Attribute> toRet = new ArrayList<>();
-		
-		Attribute heigth = new Attribute("height", (double) getHeight());
-		Attribute abstractClasses = new Attribute("abstract", (double) getCountAbstractClasses());
-		Attribute extraFields = new Attribute("fields", (double) getCountExtraFields());
-		
-		toRet.add(heigth);
-		toRet.add(abstractClasses);
-		toRet.add(extraFields);
-		
-		return toRet;
-		
-	}
 }

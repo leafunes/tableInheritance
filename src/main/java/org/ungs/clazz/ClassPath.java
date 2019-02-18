@@ -3,6 +3,7 @@ package org.ungs.clazz;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ClassPath {
 
@@ -42,6 +43,10 @@ public class ClassPath {
 
         return toRet;
 
+    }
+    
+    public Stream<Class> getAllClassesAsStream(){
+    	return this.getAllClasses().stream();
     }
 
     //TODO esto tiene que ir aca?

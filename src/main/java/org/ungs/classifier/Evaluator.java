@@ -26,10 +26,11 @@ public class Evaluator {
 
 	private Double getCoeficientFor(String attr){
 
-		if(!this.evaluatorConfig.containsKey(attr))
+		Double coef = this.evaluatorConfig.get(attr);
+		if(coef == null)
 			return 0.0;
 		
-		return this.evaluatorConfig.get(attr);
+		return coef;
 	}
 	
 	

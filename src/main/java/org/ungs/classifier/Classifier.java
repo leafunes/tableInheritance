@@ -21,8 +21,8 @@ public class Classifier {
 		this.defaultClass = defaultClass;
 	}
 	
-	public void addEvaluator(String className, Evaluator evaluator) {
-		this.evaluators.put(className, evaluator);
+	public void addEvaluator(String category, Evaluator evaluator) {
+		this.evaluators.put(category, evaluator);
 	}
 	
 	public String classify(Classifiable thing) {

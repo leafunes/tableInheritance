@@ -2,46 +2,34 @@ package org.ungs.inheritanceTree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ungs.clazz.ClassPath;
 
 public class InheritanceTreeFactory {
 
 
-
-    //TODO: esta bien este nombre? estoy devolviendo un arbol en realidad
-    public InheritanceNode getRootNodeOf(Class base){
+	// Solo el factory puede instanciar un arbol
+    public InheritanceTree getTreeOf(Class base){
         
-        List<InheritanceNode> nehi = getSons(base);
+        List<InheritanceNode> childs = getChilds(base);
+        InheritanceNode root = new InheritanceNode(childs, base);
 
-        return new InheritanceNode(nehi, base);
+        return new InheritanceTree(root);
 
     }
     
-    private List<InheritanceNode> getSons(Class clazz){
+    private List<InheritanceNode> getChilds(Class superClass){
 
-        ClassPath classPath = ClassPath.getInstance();
-        List<InheritanceNode> sons = new ArrayList<>();
-
-        for(Class c : classPath.getAllClasses()) if(!c.equals(clazz) && isSubclassOf(c, clazz)){
-        	sons.add(new InheritanceNode(getSons(c), c));
-        }
-        
-        return sons;
-        
+        // Buscamos todas las clases que extiendan de "superClass"
+        return ClassPath.getInstance()
+        		.getAllClassesAsStream()
+        		.filter(x -> x.getSuperclass() != null)
+        		.filter(x -> x.getSuperclass().equals(superClass))
+        		.map(x -> new InheritanceNode(getChilds(x), x))
+        		.collect(Collectors.toList());
     }
 
-    // Esta funcion no tiene mucho sentido que este aca, pero 
-    // encapsula y hace otras funciones mas legibles
-    // No se usa el instanceOf porque necesito que los objetos esten instanciados
-    private boolean isSubclassOf(Class a, Class b){
-        
-        if(a.getSuperclass() == null)
-        return false;
-    
-        return a.getSuperclass().equals(b);
-
-    }
 
 }
 
