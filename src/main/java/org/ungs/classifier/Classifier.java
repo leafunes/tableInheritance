@@ -31,7 +31,7 @@ public class Classifier {
 		
 		this.evaluators.forEach((name, eva) -> results.put(name, eva.getScore(thing)));
 		
-		//results.stream().forEach(x -> System.out.println(x.getScore() + " " + x.getScoringClass().getName()));
+		results.forEach((k, v) -> System.out.println(k + " " + v));
 		
 		if(isMaxElegible(results.values()))
 			return Collections.max(results.entrySet(), Comparator.comparingDouble(Map.Entry::getValue)).getKey();
@@ -51,7 +51,7 @@ public class Classifier {
 		
 		Double stdDev = Probability.computeStandardDeviation(values);
 		
-		return (max >= avg + (2 * stdDev)) || (max >= avg - (2 * stdDev));
+		return (max > avg + (2 * stdDev)) || (max > avg - (2 * stdDev));
 	
 	}
 	
